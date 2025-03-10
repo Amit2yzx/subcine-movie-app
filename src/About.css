@@ -1,0 +1,68 @@
+/* About.css */
+
+.about-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    color: #333;
+    line-height: 1.6;
+}
+
+.about-heading {
+    font-size: 2rem;
+    color: #222;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.about-section-heading {
+    font-size: 1.4rem;
+    color: #444;
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.about-text {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.artistic-paragraph {
+    font-style: italic;
+}
+/* About.css (Add these styles at the END of the file) */
+
+/* ... (Existing About.css styles) ... */
+
+.about-header {
+    display: flex; /* Use flexbox for header layout */
+    align-items: center; /* Vertically align items in header */
+    margin-bottom: 20px; /* Space below header */
+}
+
+.back-button {
+    background-color: #f0f0f0; /* Light grey background */
+    color: #555;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none; /* Remove underline from link */
+    font-size: 1rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    margin-right: 20px; /* Space between Back button and heading */
+}
+
+.back-button:hover {
+    background-color: #e0e0e0; /* Darker grey on hover */
+    color: #222;
+    text-decoration: none; /* Ensure no underline on hover */
+}
+
+.about-heading {
+    flex-grow: 1; /* Allow heading to take remaining space */
+    text-align: center; /* Center the heading */
+    margin: 0; /* Reset heading margins to align nicely with back button */
+}
