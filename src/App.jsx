@@ -34,7 +34,8 @@ function App() {
 
             const userStory = inputText;
 
-            const enhancedPrompt = `Analyze the following story, considering both deep psychological aspects and lighter, general themes. Based on this analysis, recommend 5-10 movies. For each movie, provide the title and year of release. Format your response as a list of movies, with each movie on a new line, showing the title and year in parentheses.
+            // REFINED PROMPT - Psychological Analysis Emphasis
+            const enhancedPrompt = `Perform a deep psychological analysis of the following story. Focus on subconscious themes, character motivations, and emotional depth. Based on this psychological analysis, recommend 5-10 movies that resonate with these deeper layers. For each movie, provide the title and year of release. Format your response as a list of movies, with each movie on a new line, showing the title and year in parentheses.
 
             Story: "${userStory}"`;
 
@@ -42,7 +43,7 @@ function App() {
             const initialResponse = initialResult.response;
             const geminiTextResponse = initialResponse.candidates[0].content.parts[0].text;
 
-            console.log("Gemini Movie Recommendation Response (Initial):", geminiTextResponse);
+            console.log("Gemini Movie Recommendation Response (Initial - Psychological Prompt):", geminiTextResponse);
 
             const refinementPrompt = `Refine the following list of movie recommendations. Extract just the movie titles and their release years. Return a list where each item is only the movie name and year in parentheses, with each movie on a new line.
 
