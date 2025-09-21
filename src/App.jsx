@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
-import './About.css'; // Import About.css to apply styles on About page
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import About from './About';
-import AdComponent from './AdComponent';
-
 
 function App() {
     const [inputText, setInputText] = useState('');
@@ -31,12 +26,10 @@ function App() {
             const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
             const omdbApiKey = import.meta.env.VITE_OMDB_API_KEY;
             const genAI = new GoogleGenerativeAI(apiKey);
-            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
             const userStory = inputText;
-
-            // REFINED PROMPT - Psychological Analysis Emphasis WITH LESSER-KNOWN MOVIES REQUEST
-            const enhancedPrompt = `Analyze the following story, considering both deep psychological aspects and lighter, general themes. Based on this analysis, recommend 5-10 movies. **2 must be lesser famous movie** For each movie, provide the title and year of release. Format your response as a list of movies, with each movie on a new line, showing the title and year in parentheses.
+            const enhancedPrompt = `Analyze the following story. Based on this analysis, recommend 5-10 movies. For each movie, provide the title and year of release. Format your response as a list of movies, with each movie on a new line, showing the title and year in parentheses.
 
             Story: "${userStory}"`;
 
@@ -44,21 +37,7 @@ function App() {
             const initialResponse = initialResult.response;
             const geminiTextResponse = initialResponse.candidates[0].content.parts[0].text;
 
-            console.log("Gemini Movie Recommendation Response (Initial - Psychological Prompt):", geminiTextResponse);
-
-            const refinementPrompt = `Refine the following list of movie recommendations. Extract just the movie titles and their release years. Return a list where each item is only the movie name and year in parentheses, with each movie on a new line.
-
-            Movie Recommendations (from previous analysis):
-            ${geminiTextResponse}
-            `;
-
-            const refinedResult = await model.generateContent(refinementPrompt);
-            const refinedResponse = refinedResult.response;
-            const refinedGeminiResponse = refinedResponse.candidates[0].content.parts[0].text;
-
-            console.log("Gemini Movie Recommendation Response (Refined - Names and Years):", refinedGeminiResponse);
-
-            const movieLines = refinedGeminiResponse.trim().split('\n');
+            const movieLines = geminiTextResponse.trim().split('\n');
             const fetchedMovies = [];
 
             for (const line of movieLines) {
@@ -66,7 +45,6 @@ function App() {
                 if (movieMatch) {
                     const title = movieMatch[1].trim();
                     const year = movieMatch[2];
-                    console.log(`Fetching details for: ${title} (${year})`);
 
                     try {
                         const omdbResponse = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&y=${year}&apikey=${omdbApiKey}`);
@@ -79,30 +57,13 @@ function App() {
                                 poster: omdbData.Poster,
                                 imdbRating: omdbData.imdbRating,
                             });
-                        } else {
-                            console.warn(`OMDb API Error for ${title} (${year}): ${omdbData.Error}`);
-                            fetchedMovies.push({
-                                title: title,
-                                year: year,
-                                poster: null,
-                                imdbRating: "N/A",
-                            });
                         }
-
-
                     } catch (omdbError) {
                         console.error('Error calling OMDb API:', omdbError);
-                        fetchedMovies.push({
-                            title: title,
-                            year: year,
-                            poster: null,
-                            imdbRating: "N/A",
-                        });
                     }
                 }
             }
 
-            console.log("Fetched Movie Data from OMDb:", fetchedMovies);
             setMovieRecommendations(fetchedMovies);
             setInputText('');
 
@@ -113,71 +74,56 @@ function App() {
         }
     };
 
-
     return (
-        <BrowserRouter>
-            <div className="app-container">
-                <header className="app-header">
-                    <h1 className="app-title">SubCine</h1>
-                    <p className="app-tagline">Deep dive movie discovery from your subconscious mind.</p>
-                    <div className="header-links">
-                        <Link to="/about" className="about-link">About</Link>
-                    </div>
-                </header>
+        <div className="app-container">
+            <header className="app-header">
+                <h1 className="app-title">SubCine</h1>
+                <p className="app-tagline">Deep dive movie discovery from your subconscious mind.</p>
+                <button className="about-button">About</button> {/* This will be styled to look like the image */}
+            </header>
 
-                <div className="main-content">
-                    <Routes>
-                        <Route path="/" element={
-                            <section className="input-section">
-                                <textarea
-                                    className="story-input"
-                                    value={inputText}
-                                    onChange={handleInputChange}
-                                    placeholder="Write a random story from your heart, soul or mind and get movie recommendations (max 600 characters)"
-                                />
-                                <button
-                                    className="recommend-button"
-                                    onClick={handleSubmit}
-                                    disabled={isButtonWaiting}
-                                >
-                                    {isButtonWaiting ? 'Waiting...' : 'Get Recommendations'}
-                                </button>
-                                <section className="recommendations-section">
-                                    <h2 className="recommendations-heading">Movie Recommendations</h2>
-                                    <div className="movie-grid">
-                                        {movieRecommendations.length > 0 ? (
-                                            movieRecommendations.map((movie, index) => (
-                                                <div key={index} className="movie-card">
-                                                    <img className="movie-poster" src={movie.poster} alt={`Poster for ${movie.title}`} />
-                                                    <div className="movie-details">
-                                                        <a
-                                                            className="movie-title-link"
-                                                            href={`https://www.google.com/search?q=${encodeURIComponent(movie.title) + ' movie'}`}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                        >
-                                                            {movie.title} ({movie.year})
-                                                        </a>
-                                                        <p className="movie-rating">IMDb Rating: {movie.imdbRating}</p>
-                                                    </div>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            <p className="no-recommendations-message">Write a story and click 'Get Recommendations' to see movies here!</p>
-                                        )}
+            <main className="main-content">
+                <textarea
+                    className="story-input"
+                    value={inputText}
+                    onChange={handleInputChange}
+                    placeholder="Write a random story from your heart, soul or mind and get movie recommendations (max 600 characters)"
+                />
+                <button
+                    className="recommend-button"
+                    onClick={handleSubmit}
+                    disabled={isButtonWaiting}
+                >
+                    {isButtonWaiting ? 'Waiting...' : 'Get Recommendations'}
+                </button>
+
+                <section className="recommendations-section">
+                    <h2 className="recommendations-heading">Movie Recommendations</h2>
+                    {movieRecommendations.length > 0 ? (
+                        <div className="movies-grid">
+                            {movieRecommendations.map((movie, index) => (
+                                <div key={index} className="movie-card">
+                                    <img className="movie-poster" src={movie.poster} alt={`Poster for ${movie.title}`} />
+                                    <div className="movie-details">
+                                        <a
+                                            className="movie-title-link"
+                                            href={`https://www.google.com/search?q=${encodeURIComponent(movie.title) + ' movie'}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {movie.title} ({movie.year})
+                                        </a>
+                                        <p className="movie-rating">IMDb Rating: {movie.imdbRating}</p>
                                     </div>
-                                </section>
-                            </section>
-                        } />
-                        <Route path="/about" element={<About />} />
-                    </Routes>
-                </div>
-
-                <div className="ad-sidebar">
-                    <AdComponent />
-                </div>
-            </div>
-        </BrowserRouter>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="no-recommendations-message">Write a story and click 'Get Recommendations' to see movies here!</p>
+                    )}
+                </section>
+            </main>
+        </div>
     );
 }
 
