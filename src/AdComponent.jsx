@@ -5,19 +5,17 @@ const AdComponent = () => {
         try {
             (window.adsbygoogle = window.adsbygoogle || []).push({});
         } catch (e) {
-            console.error('AdSense push error:', e);
+            console.error('AdSense error:', e);
         }
     }, []);
 
     return (
-        <ins
-            className="adsbygoogle"
+        <ins className="adsbygoogle"
             style={{ display: 'block' }}
             data-ad-client="ca-pub-5303491138270690"
             data-ad-slot="5276708258"
             data-ad-format="auto"
-            data-full-width-responsive="true"
-        ></ins>
+            data-full-width-responsive="true"></ins>
     );
 };
 
