@@ -4,6 +4,7 @@ import './About.css'; // Import About.css to apply styles on About page
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import About from './About';
+import AdComponent from './AdComponent';
 
 
 function App() {
@@ -85,7 +86,8 @@ function App() {
                                 year: year,
                                 poster: null,
                                 imdbRating: "N/A",
-                            });
+          .push({});
+                        });
                         }
 
 
@@ -124,51 +126,57 @@ function App() {
                     </div>
                 </header>
 
-                <Routes>
-                    <Route path="/" element={
-                        <section className="input-section">
-                            <textarea
-                                className="story-input"
-                                value={inputText}
-                                onChange={handleInputChange}
-                                placeholder="Write a random story from your heart, soul or mind and get movie recommendations (max 600 characters)"
-                            />
-                            <button
-                                className="recommend-button"
-          碜                    onClick={handleSubmit}
-                                disabled={isButtonWaiting}
-                            >
-                                {isButtonWaiting ? 'Waiting...' : 'Get Recommendations'}
-                            </button>
-                            <section className="recommendations-section">
-                                <h2 className="recommendations-heading">Movie Recommendations</h2>
-                                <div className="movie-grid">
-                                    {movieRecommendations.length > 0 ? (
-                                        movieRecommendations.map((movie, index) => (
-                                            <div key={index} className="movie-card">
-                                                <img className="movie-poster" src={movie.poster} alt={`Poster for ${movie.title}`} />
-                                                <div className="movie-details">
-                                                    <a
-                                                        className="movie-title-link"
-                                                        href={`https://www.google.com/search?q=${encodeURIComponent(movie.title) + ' movie'}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                    >
-                                                        {movie.title} ({movie.year})
-                                                    </a>
-                                                    <p className="movie-rating">IMDb Rating: {movie.imdbRating}</p>
+                <div className="main-content">
+                    <Routes>
+                        <Route path="/" element={
+                            <section className="input-section">
+                                <textarea
+                                    className="story-input"
+                                    value={inputText}
+                                    onChange={handleInputChange}
+                                    placeholder="Write a random story from your heart, soul or mind and get movie recommendations (max 600 characters)"
+                                />
+                                <button
+                                    className="recommend-button"
+                                    onClick={handleSubmit}
+                                    disabled={isButtonWaiting}
+                                >
+                                    {isButtonWaiting ? 'Waiting...' : 'Get Recommendations'}
+                                </button>
+                                <section className="recommendations-section">
+                                    <h2 className="recommendations-heading">Movie Recommendations</h2>
+                                    <div className="movie-grid">
+                                        {movieRecommendations.length > 0 ? (
+                                            movieRecommendations.map((movie, index) => (
+                                                <div key={index} className="movie-card">
+                                                    <img className="movie-poster" src={movie.poster} alt={`Poster for ${movie.title}`} />
+                                                    <div className="movie-details">
+                                                        <a
+                                                            className="movie-title-link"
+                                                            href={`https://www.google.com/search?q=${encodeURIComponent(movie.title) + ' movie'}`}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                        >
+                                                            {movie.title} ({movie.year})
+                                                        </a>
+                                                        <p className="movie-rating">IMDb Rating: {movie.imdbRating}</p>
+                                                    </div>
                                                 </div>
-                                            </div>
+                          .push({});
                                         ))
                                     ) : (
                                         <p className="no-recommendations-message">Write a story and click 'Get Recommendations' to see movies here!</p>
                                     )}
                                 </div>
                             </section>
-                        </section>
-                    } />
-                    <Route path="/about" element={<About />} />
-                </Routes>
+                        } />
+                        <Route path="/about" element={<About />} />
+                    </Routes>
+                </div>
+
+                <div className="ad-sidebar">
+                    <AdComponent />
+                </div>
             </div>
         </BrowserRouter>
     );

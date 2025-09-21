@@ -1,4 +1,4 @@
- /* App.css */
+/* App.css */
 
 body {
   font-family: sans-serif;
@@ -10,11 +10,20 @@ body {
 
 .app-container {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 20px;
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
+}
+
+.main-content {
+    flex-grow: 1;
+}
+
+.ad-sidebar {
+    width: 300px;
+    margin-left: 20px;
 }
 
 /* Header Styles */
@@ -112,6 +121,15 @@ body {
 @media (max-width: 959px) {
   .movie-grid {
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjust minmax for 2 columns, more flexible with auto-fit and wider cards */
+  }
+.app-container {
+    flex-direction: column;
+  }
+
+  .ad-sidebar {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 20px;
   }
 }
 
